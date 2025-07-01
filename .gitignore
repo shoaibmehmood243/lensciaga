@@ -1,0 +1,8 @@
+# Node.js (api)
+api/node_modules/
+api/.env
+
+# React (admin-dashboard)
+admin-dashboard/node_modules/
+admin-dashboard/build/
+admin-dashboard/.env
