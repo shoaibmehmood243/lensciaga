@@ -77,3 +77,38 @@ exports.deletePromoCode = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+exports.validatePromoCode = async (req, res) => {
+  try {
+    const { code } = req.params;
+    
+    // Find the promo code in the database
+    const [promoCode] = await db.execute('SELECT * FROM promo_codes WHERE code = ? && is_active = 1', [code]);
+
+    if (promoCode.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invalid promo code'
+      });
+    }
+
+    // Return promo code details
+    const promoCodeByCode = {...promoCode[0]};
+    res.json({
+      success: true,
+      message: 'Promo code is valid',
+      data: {
+        id: promoCodeByCode.id,
+        code: promoCodeByCode.code,
+        discountPercentage: promoCodeByCode.discount,
+      }
+    });
+
+  } catch (error) {
+    console.error('Error validating promo code:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};

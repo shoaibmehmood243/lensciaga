@@ -48,7 +48,7 @@ export default function OrderDetailsModal({ order, onClose, onUpdateStatus, isUp
           <div className="sm:flex sm:items-start">
             <div className="mt-3 w-full text-center sm:mt-0 sm:text-left">
               <h3 className="text-lg font-medium leading-6 text-gray-900">
-                Order #{order.id}
+                Order #{order.order_id}
               </h3>
               {isLoading ? (
                 <div className="mt-4 flex justify-center">

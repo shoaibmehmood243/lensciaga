@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { setCredentials } from '../store/slices/authSlice'
 import { authAPI } from '../services/api'
 import toast from 'react-hot-toast'
+import logo from '../assets/logo.png'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -38,12 +39,14 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
-        <div>
-          <img
-            className="mx-auto h-12 w-auto"
-            src="/logo.png"
-            alt="LensCart Admin"
-          />
+        <div className='text-center flex items-center flex-col'>
+          <div className='bg-red-600 w-2/5 flex justify-center'>
+            <img
+              className="mx-auto h-12 w-auto"
+              src={logo}
+              alt="LensCart Admin"
+            />
+          </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Welcome back
           </h2>

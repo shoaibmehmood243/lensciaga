@@ -2,7 +2,6 @@ import { Fragment, useState } from 'react'
 import { Dialog, Transition, Menu } from '@headlessui/react'
 import {
   Bars3Icon,
-  XMarkIcon,
   HomeIcon,
   ShoppingBagIcon,
   TagIcon,
@@ -12,6 +11,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { logout } from '../store/slices/authSlice'
 import toast from 'react-hot-toast'
+import logo from '../assets/logo.png'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
@@ -63,7 +63,7 @@ export default function Layout() {
                   <div className="flex h-16 shrink-0 items-center">
                     <img
                       className="h-8 w-auto"
-                      src="/logo.png"
+                      src={logo}
                       alt="LensCart Admin"
                     />
                   </div>
@@ -107,12 +107,14 @@ export default function Layout() {
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
-          <div className="flex h-16 shrink-0 items-center">
-            <img
-              className="h-8 w-auto"
-              src="/logo.png"
-              alt="LensCart Admin"
-            />
+          <div className="flex shrink-0 items-center py-2">
+            <div className='bg-red-600'>
+              <img
+                className="h-14 w-28"
+                src={logo}
+                alt="LensCart Admin"
+              />
+            </div>
           </div>
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">

@@ -3,10 +3,25 @@ const { sendMail } = require('../services/mail');
 const { generateOrderEmailHTML, generateUpdateOrderStatusEmailHTML } = require('../utils/email-templates');
 require('dotenv').config();
 
+// Helper function to generate random order ID
+const generateOrderId = () => {
+  // Get current timestamp in milliseconds (for uniqueness)
+  const timestamp = Date.now().toString().slice(-4);
+  
+  // Generate 3 random numbers
+  const randomNum = Math.floor(Math.random() * 900) + 100; // 100-999
+  
+  // Combine with prefix
+  return `LENS${timestamp}${randomNum}`;
+};
+
 exports.placeOrder = async (req, res) => {
   const { name, email, phone, address, items, totalAmount, promoCode } = req.body;
 
   try {
+    // Generate unique order ID
+    const orderId = generateOrderId();
+
     // Validate and update product quantities
     for (const item of items) {
       const [productResult] = await db.execute('SELECT quantity FROM products WHERE id = ?', [item.id]);
@@ -37,11 +52,11 @@ exports.placeOrder = async (req, res) => {
     const promoCodeToSave = promo ? promo.code : '';
 
     const [result] = await db.execute(
-      'INSERT INTO orders (name, email, phone, address, items, total_amount, promo_code, discount_applied) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [name, email, phone, address, JSON.stringify(items), discountedTotal, promoCodeToSave, discount]
+      'INSERT INTO orders (order_id, name, email, phone, address, items, total_amount, promo_code, discount_applied) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [orderId, name, email, phone, address, JSON.stringify(items), discountedTotal, promoCodeToSave, discount]
     );
 
-    const htmlContent = generateOrderEmailHTML(result.insertId, name, email, items, discountedTotal, promoCodeToSave, discount);
+    const htmlContent = generateOrderEmailHTML(orderId, name, email, items, discountedTotal, promoCodeToSave, discount);
 
     // Send email to admin
     await sendMail('shoaibmehmood065@gmail.com', 'New Order Received', htmlContent);
@@ -50,12 +65,26 @@ exports.placeOrder = async (req, res) => {
     await sendMail(email, 'Order Confirmation', htmlContent);
 
     res.status(201).json({
+      success: true,
       message: 'Order placed successfully',
-      orderId: result.insertId
+      orderId: orderId,
+      order: {
+        id: result.insertId,
+        orderId,
+        name,
+        email,
+        items,
+        totalAmount: discountedTotal,
+        promoCode: promoCodeToSave,
+        discount
+      }
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error placing order:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to place order'
+    });
   }
 };
 
